@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Phone,
   LayoutDashboard,
@@ -8,8 +8,23 @@ import {
   Settings,
   LogOut,
 } from 'lucide-react';
+import Cookies from 'js-cookie';
+
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 
 export function AppSidebar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    navigate("/");
+  };
+
   return (
     <div className="w-16 md:w-64 h-screen bg-gray-900 text-white flex flex-col border-r border-gray-800 transition-all duration-300">
       {/* Sidebar Header */}
@@ -114,17 +129,32 @@ export function AppSidebar() {
             </NavLink>
           </li>
           <li>
-            <NavLink
-              to="/logout"
-              className={({ isActive }) =>
-                `flex items-center md:justify-start justify-center w-full p-2 rounded ${
-                  isActive ? 'bg-gray-800' : 'hover:bg-gray-700'
-                }`
-              }
-            >
-              <LogOut className="h-5 w-5" />
-              <span className="ml-2 hidden md:inline">Logout</span>
-            </NavLink>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center md:justify-start justify-center w-full p-2 rounded hover:bg-gray-700">
+                  <LogOut className="h-5 w-5" />
+                  <span className="ml-2 hidden md:inline">Logout</span>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56">
+                <div className="text-sm mb-4">Are you sure you want to log out?</div>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </li>
         </ul>
       </div>
