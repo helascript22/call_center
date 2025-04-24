@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
@@ -8,11 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 
 export default function ChangePassword() {
-    const { userId } = useParams();
+    const location = useLocation();
+    const { userId } = location.state || {}; 
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const navigate = useNavigate();
-    const { toast } = useToast();
+    const { toast } = useToast();  
   
     const handleChangePassword = async (e) => {
       e.preventDefault();

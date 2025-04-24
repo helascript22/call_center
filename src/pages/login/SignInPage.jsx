@@ -49,7 +49,7 @@ export default function SignInPage() {
           variant: "destructive",
         })
         setTimeout(() => {
-          navigate(`/change-password/${userId}`);
+          navigate("/change-password", { state: { userId } });
         }, 2000)
       }
     } catch (error) {
