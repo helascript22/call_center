@@ -3,66 +3,61 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import Cookies from "js-cookie"
 import { Phone } from "lucide-react"
-import { FaGoogle, FaTwitter, FaRegEnvelope } from "react-icons/fa"
-import { RiFacebookLine } from "react-icons/ri"
+import { FaRegEnvelope } from "react-icons/fa"
 import { IoLockClosedOutline } from "react-icons/io5"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Link } from "react-router-dom"
-import { useToast } from "@/hooks/use-toast"
+import { toast, ToastContainer } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function SignInPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [rememberMe, setRememberMe] = useState(false)
   const navigate = useNavigate()
-  const { toast } = useToast()
 
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
       const res = await axios.post("http://localhost:3001/user/login", { email, password })
-
-      const token = res.data?.user?.token || res.data?.token
-      const isActivate = res.data?.user?.user?.isActivate
-      const userId = res.data?.user?.user?.id;
-
-      Cookies.set("token", token, {
-        expires: 7,
-        secure: true,
-        sameSite: "strict",
-      })
-
-      if (isActivate) {
-        toast({
-          title: "Login successful",
-          description: "Redirecting to dashboard...",
-          variant: "success",
+  
+      const token = res?.data?.user?.token || res?.data?.token
+      const isActivate = res?.data?.user?.user?.isActivate
+      const state = res?.data?.user?.user?.state
+      const userId = res?.data?.user?.user?.id
+  
+      if (!state) {
+        toast.error("Login failed. Your account is not allowed to sign in.")
+        return
+      }
+  
+      if (!isActivate) {
+        Cookies.set("token", token, {
+          expires: rememberMe ? 7 : 1 / 24,
+          secure: true,
+          sameSite: "strict",
         })
+        toast.success("Login successful. Redirecting to dashboard...")
         navigate("/dashboard")
       } else {
-        toast({
-          title: "Account deactivated",
-          description: "Your account is deactivated. Redirecting to recovery page.",
-          variant: "destructive",
-        })
+        toast.info("Please change your password before accessing the dashboard.")
         setTimeout(() => {
-          navigate("/change-password", { state: { userId } });
+          navigate("/change-password", { state: { userId } })
         }, 2000)
       }
     } catch (error) {
-      toast({
-        title: "Login failed",
-        description: error.response?.data?.message || "Something went wrong",
-        variant: "destructive",
-      })
+      toast.error(error.response?.data?.message || "Login failed. Something went wrong.")
     }
   }
+  
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
+      <ToastContainer position="bottom-left" autoClose={3000} />
+      
       <header className="border-b border-gray-800 p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
@@ -122,7 +117,12 @@ export default function SignInPage() {
 
               <div className="flex justify-between items-center text-sm text-gray-400">
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="remember" className="rounded-full data-[state=checked]:bg-blue-600 border-gray-600" />
+                  <Checkbox
+                    id="remember"
+                    checked={rememberMe}
+                    onCheckedChange={(checked) => setRememberMe(checked)}
+                    className="rounded-full data-[state=checked]:bg-blue-600 border-gray-600"
+                  />
                   <label htmlFor="remember" className="text-sm">
                     Remember me
                   </label>
@@ -135,44 +135,6 @@ export default function SignInPage() {
               <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                 Sign In
               </Button>
-
-              <div className="flex items-center gap-2">
-                <Separator className="flex-1 bg-gray-700" />
-                <span className="text-gray-500 text-sm">Or</span>
-                <Separator className="flex-1 bg-gray-700" />
-              </div>
-
-              <div className="space-y-3">
-                <Button
-                  variant="primary"
-                  className="w-full border border-white hover:bg-gray-800 text-white justify-start flex items-center gap-2 px-4 py-2"
-                >
-                  <span className="border-r border-white pr-2 flex items-center">
-                    <FaGoogle />
-                  </span>
-                  <span>Sign In with Google</span>
-                </Button>
-
-                <Button
-                  variant="primary"
-                  className="w-full border border-white hover:bg-gray-800 text-white justify-start flex items-center gap-2 px-4 py-2"
-                >
-                  <span className="border-r border-white pr-2 flex items-center">
-                    <RiFacebookLine />
-                  </span>
-                  <span>Sign In with Facebook</span>
-                </Button>
-
-                <Button
-                  variant="primary"
-                  className="w-full border border-white hover:bg-gray-800 text-white justify-start flex items-center gap-2 px-4 py-2"
-                >
-                  <span className="border-r border-white pr-2 flex items-center">
-                    <FaTwitter />
-                  </span>
-                  <span>Sign In with Twitter</span>
-                </Button>
-              </div>
             </form>
           </CardContent>
         </Card>

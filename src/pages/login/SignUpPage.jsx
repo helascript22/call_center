@@ -1,11 +1,8 @@
 import {  Phone } from 'lucide-react'
-import {  FaGoogle, FaTwitter } from "react-icons/fa";
-import { RiFacebookLine } from "react-icons/ri";
 import { FaRegEnvelope } from "react-icons/fa";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Link } from 'react-router';
 
@@ -72,37 +69,6 @@ export default function SignUpPage() {
               <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                 Sign Up
               </Button>
-
-              {/* Divider */}
-              <div className="flex items-center gap-2">
-                <Separator className="flex-1 bg-gray-700" />
-                <span className="text-gray-500 text-sm">Or</span>
-                <Separator className="flex-1 bg-gray-700" />
-              </div>
-
-              {/* Social Sign-in Options */}
-              <div className="space-y-3">
-              <Button
-                variant="primary" className="w-full border border-white hover:bg-gray-800 text-white justify-start flex items-center gap-2 px-4 py-2">
-                <span className="border-r border-white pr-2 flex items-center">
-                  <FaGoogle />
-                </span>
-                <span>Sign Up with Google</span>
-              </Button>
-
-              <Button variant="primary" className="w-full border border-white hover:bg-gray-800 text-white justify-start flex items-center gap-2 px-4 py-2">
-              <span className="border-r border-white pr-2 flex items-center">
-                <RiFacebookLine  />
-              </span>  
-                <span>Sign Up with Facebook</span>
-              </Button>
-              <Button variant="primary" className="w-full border border-white hover:bg-gray-800 text-white justify-start flex items-center gap-2 px-4 py-2">
-                <span className="border-r border-white pr-2 flex items-center">
-                 <FaTwitter />
-                </span>
-                <span>Sign Up with Twitter</span>
-              </Button>
-            </div>
             </form>
           </CardContent>
         </Card>
